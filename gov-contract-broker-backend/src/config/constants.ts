@@ -1,0 +1,32 @@
+export const NAICS_CODES = {
+  ACCOUNTING: '541219',
+  PROGRAMMING: '541511',
+  SYSTEMS_DESIGN: '541512',
+  CONSULTING: '541611',
+  STAFFING: '561320',
+  LOGISTICS: '488510',
+} as const;
+
+export const TARGET_NAICS_CODES = Object.values(NAICS_CODES);
+
+export const CONTRACT_TYPES = {
+  FIRM_FIXED_PRICE: 'FFP',
+  TIME_AND_MATERIALS: 'T&M',
+  COST_PLUS: 'CPFF',
+  INDEFINITE_DELIVERY: 'IDIQ',
+} as const;
+
+export const SET_ASIDE_TYPES = {
+  SMALL_BUSINESS: 'SB',
+  SDVOSB: 'SDVOSB',
+  WOSB: 'WOSB',
+  HUB_ZONE: 'HUBZone',
+  EIGHT_A: '8(a)',
+} as const;
+
+export const SYNC_CONFIG = {
+  BATCH_SIZE: 100,
+  MAX_RETRIES: 3,
+  RETRY_DELAY_MS: 5000,
+  DAYS_BACK: 90,
+} as const;

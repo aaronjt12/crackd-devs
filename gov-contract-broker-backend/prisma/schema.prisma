@@ -1,0 +1,181 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Contract {
+  id                String   @id @default(uuid())
+  awardId           String   @unique
+  title             String
+  description       String?  @db.Text
+  awardAmount       Float
+  awardDate         DateTime
+  awardingAgency    String
+  awardingOffice    String?
+  naicsCode         String?
+  naicsDescription  String?
+  placeOfPerformance String?
+  periodOfPerformanceStart DateTime?
+  periodOfPerformanceEnd   DateTime?
+  contractType      String?
+  setAsideType      String?
+  lastModified      DateTime?
+  syncedAt          DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  awardee           Awardee? @relation(fields: [awardeeId], references: [id])
+  awardeeId         String?
+
+  outreachAttempts  OutreachAttempt[]
+  subcontractors    SubcontractorMatch[]
+
+  @@index([awardDate])
+  @@index([naicsCode])
+  @@index([awardingAgency])
+}
+
+model Awardee {
+  id                String   @id @default(uuid())
+  uei               String?  @unique
+  name              String
+  addressLine1      String?
+  addressLine2      String?
+  city              String?
+  state             String?
+  zipCode           String?
+  country           String?
+  phoneNumber       String?
+  email             String?
+  website           String?
+  contactName       String?
+  contactTitle      String?
+  contactEmail      String?
+  contactPhone      String?
+  businessSize      String?
+  socioeconomicStatus String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  contracts         Contract[]
+  outreachAttempts  OutreachAttempt[]
+
+  @@index([name])
+  @@index([email])
+}
+
+model OutreachAttempt {
+  id                String   @id @default(uuid())
+  contractId        String
+  awardeeId         String
+  emailSent         Boolean  @default(false)
+  emailSentAt       DateTime?
+  emailSubject      String?
+  emailBody         String?  @db.Text
+  responseReceived  Boolean  @default(false)
+  responseDate      DateTime?
+  responseContent   String?  @db.Text
+  status            OutreachStatus @default(PENDING)
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  contract          Contract @relation(fields: [contractId], references: [id])
+  awardee           Awardee  @relation(fields: [awardeeId], references: [id])
+
+  @@index([status])
+  @@index([emailSentAt])
+}
+
+model Subcontractor {
+  id                String   @id @default(uuid())
+  name              String
+  email             String?
+  phoneNumber       String?
+  website           String?
+  capabilities      String[]
+  naicsCodes        String[]
+  certifications    String[]
+  pastPerformance   String?  @db.Text
+  capacity          String?
+  location          String?
+  socioeconomicStatus String?
+  clearanceLevel    String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  matches           SubcontractorMatch[]
+
+  @@index([name])
+  @@index([naicsCodes])
+}
+
+model SubcontractorMatch {
+  id                String   @id @default(uuid())
+  contractId        String
+  subcontractorId   String
+  matchScore        Float?
+  matchReason       String?  @db.Text
+  status            MatchStatus @default(POTENTIAL)
+  proposedCommission Float?
+  agreedCommission  Float?
+  teamingAgreement  String?  @db.Text
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  contract          Contract @relation(fields: [contractId], references: [id])
+  subcontractor     Subcontractor @relation(fields: [subcontractorId], references: [id])
+
+  @@index([status])
+  @@index([matchScore])
+}
+
+model SyncLog {
+  id                String   @id @default(uuid())
+  syncType          String
+  startTime         DateTime
+  endTime           DateTime?
+  recordsProcessed  Int      @default(0)
+  recordsCreated    Int      @default(0)
+  recordsUpdated    Int      @default(0)
+  errors            String?  @db.Text
+  status            SyncStatus @default(IN_PROGRESS)
+  createdAt         DateTime @default(now())
+
+  @@index([syncType])
+  @@index([startTime])
+  @@index([status])
+}
+
+enum OutreachStatus {
+  PENDING
+  SENT
+  BOUNCED
+  RESPONDED_INTERESTED
+  RESPONDED_NOT_INTERESTED
+  FOLLOW_UP_REQUIRED
+  CLOSED
+}
+
+enum MatchStatus {
+  POTENTIAL
+  CONTACTED
+  IN_DISCUSSION
+  AGREEMENT_DRAFT
+  AGREEMENT_SIGNED
+  ACTIVE
+  COMPLETED
+  REJECTED
+}
+
+enum SyncStatus {
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  PARTIAL
+}
