@@ -3,15 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Contract {
   id                String   @id @default(uuid())
   awardId           String   @unique
   title             String
-  description       String?  @db.Text
+  description       String?  
   awardAmount       Float
   awardDate         DateTime
   awardingAgency    String
@@ -75,12 +75,12 @@ model OutreachAttempt {
   emailSent         Boolean  @default(false)
   emailSentAt       DateTime?
   emailSubject      String?
-  emailBody         String?  @db.Text
+  emailBody         String?  
   responseReceived  Boolean  @default(false)
   responseDate      DateTime?
-  responseContent   String?  @db.Text
+  responseContent   String?  
   status            OutreachStatus @default(PENDING)
-  notes             String?  @db.Text
+  notes             String?  
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -100,7 +100,7 @@ model Subcontractor {
   capabilities      String[]
   naicsCodes        String[]
   certifications    String[]
-  pastPerformance   String?  @db.Text
+  pastPerformance   String?  
   capacity          String?
   location          String?
   socioeconomicStatus String?
@@ -119,12 +119,12 @@ model SubcontractorMatch {
   contractId        String
   subcontractorId   String
   matchScore        Float?
-  matchReason       String?  @db.Text
+  matchReason       String?  
   status            MatchStatus @default(POTENTIAL)
   proposedCommission Float?
   agreedCommission  Float?
-  teamingAgreement  String?  @db.Text
-  notes             String?  @db.Text
+  teamingAgreement  String?  
+  notes             String?  
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -143,7 +143,7 @@ model SyncLog {
   recordsProcessed  Int      @default(0)
   recordsCreated    Int      @default(0)
   recordsUpdated    Int      @default(0)
-  errors            String?  @db.Text
+  errors            String?  
   status            SyncStatus @default(IN_PROGRESS)
   createdAt         DateTime @default(now())
 
