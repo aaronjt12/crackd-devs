@@ -12,7 +12,13 @@
     "prisma:studio": "prisma studio",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["government", "contracts", "usaspending", "api", "broker"],
+  "keywords": [
+    "government",
+    "contracts",
+    "usaspending",
+    "api",
+    "broker"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -30,6 +36,7 @@
     "morgan": "^1.11.0",
     "node-cron": "^4.6.0",
     "prisma": "^7.9.1",
+    "socket.io": "^4.8.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^7.0.2",
     "winston": "^3.19.0"
